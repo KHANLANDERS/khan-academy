@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <meta charset="utf-8">
+        <title>Project: Travel webpage</title>
+    </head>
+    <body>
+        <h1 class="header">Travel to Bali</h1><br/>
+<div class="container-fluid">
+<div class="row">
+<div class="col-md-4"><img src="https://www.kasandbox.org/programming-images/landscapes/beach-waves-at-sunset.png" height="200" width="300"></div>
+<div class="col-md-4"><img src="https://www.kasandbox.org/programming-images/landscapes/beach-with-palm-trees.png" height="200" width="300"></div>
+<div class="col-md-4"><img src="https://www.kasandbox.org/programming-images/landscapes/beach.png" height="200" width="300"></div>
+</div>
+</div>
+        <h3>Things to see</h3>
+        <li>The epic volcano</li>
+        <li>Monkey forest</li>
+        
+        <h3>Things to do</h3>
+        <li>Snorkling</li>
+        <li>Meditating</li>
+        <br/>
+        <p>Bali is a wonderful place to visit, especially off beat places.</p>
+        <p>The beaches are one of the most popular places to go</p>
+      <small>This is by the way, a practice project on Khan Academy</small>
+    </body>
+</html>
