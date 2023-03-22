@@ -1,0 +1,237 @@
+/* My name is Beckie Loewenstein, and I changed the original to include gems, hearts, and rocks. If the Beaver touches a rock, he loses a heart. If he touches a gem, then he gains a heart. If he wins more than 60% of the sticks, then he wins. If he loses all of his hearts, then game over.*/
+
+//Create hearts
+
+var Heart = function(x, y) {
+    this.x = x;
+    this.y = y;
+    this.img = getImage("space/healthheart");
+};
+
+Heart.prototype.draw = function() {
+    image(this.img, this.x, this.y, 40, 40);
+};
+
+//Create the Beaver and everything that belongs to him
+
+var Beaver = function(x, y) {
+    this.x = x;
+    this.y = y;
+    this.img = getImage("creatures/Hopper-Happy");
+    this.sticks = 0;
+    this.rocks = 0;
+    this.hearts = 3;
+    this.gems = 0;
+};
+
+Beaver.prototype.draw = function() {
+    fill(255, 0, 0);
+    this.y = constrain(this.y, 0, height-50);
+    image(this.img, this.x, this.y, 40, 40);
+};
+
+//space bar to hop up
+
+Beaver.prototype.hop = function() {
+    this.img = getImage("creatures/Hopper-Jumping");
+    this.y -= 5;
+};
+
+Beaver.prototype.fall = function() {
+    this.img = getImage("creatures/Hopper-Happy");
+    this.y += 5;
+};
+
+Beaver.prototype.checkForStickGrab = function(stick) {
+    if ((stick.x >= this.x && stick.x <= (this.x + 40)) &&
+        (stick.y >= this.y && stick.y <= (this.y + 40))) {
+        stick.y = -400;
+        this.sticks++;
+    }
+};
+
+var Stick = function(x, y) {
+    this.x = x;
+    this.y = y;
+};
+
+Stick.prototype.draw = function() {
+    fill(89, 71, 0);
+    rectMode(CENTER);
+    rect(this.x, this.y, 5, 40);
+};
+
+var Gem = function(x, y) {
+    this.x = x;
+    this.y = y;
+    this.img = getImage("cute/GemBlue");
+};
+
+Gem.prototype.draw = function() {
+    image(this.img, this.x, this.y, 40, 40);
+};
+
+//create rocks that will be obstacles that take away hearts
+
+var Rock = function(x, y) {
+    this.x = x;
+    this.y = y;
+    this.img = getImage("cute/Rock");
+};
+
+Rock.prototype.draw = function() {
+    image(this.img, this.x, this.y, 40, 40);
+};
+
+Beaver.prototype.checkForRockTouch = function(rock) {
+    if ((rock.x >= this.x && rock.x <= (this.x + 40)) &&
+        (rock.y >= this.y && rock.y <= (this.y + 40))) {
+        rock.y = -400;
+        this.rocks++;
+        this.hearts--;
+    }
+};
+
+//create gems to save hearts and win points
+
+Beaver.prototype.checkForGemGrab = function(gem) {
+    if ((gem.x >= this.x && gem.x <= (this.x + 40)) &&
+        (gem.y >= this.y && gem.y <= (this.y + 40))) {
+        gem.y = -400;
+        this.gems++;
+        if (this.hearts < 3 && this.hearts > 0) {
+            this.hearts++;
+        }
+    }
+};
+
+var beaver = new Beaver(200, 300);
+
+//create arrays to automatically add new 
+
+var sticks = [];
+for (var i = 0; i < 40; i++) {  
+    sticks.push(new Stick(i * 40 + 300, random(70, 300)));
+}
+
+var rocks = [];
+for (var i = 0; i < 40; i++) {  
+    rocks.push(new Rock(i * 150, random(330, 400)));
+}
+
+var hearts = [];
+for (var i = 0; i < 3; i++) {  
+    hearts.push(new Heart(i * 40 + 270, 10));
+}
+
+var gems = [];
+for (var i = 0; i < 40; i++) {  
+    gems.push(new Gem(i * 200 + 300, random(70, 300)));
+}
+
+var grassXs = [];
+for (var i = 0; i < 25; i++) { 
+    grassXs.push(i*20);
+}
+
+
+draw = function() {
+    
+    if (beaver.hearts > 0) {
+        // static
+        background(227, 254, 255);
+        fill(13, 0, 255);
+        text("Grab sticks and gems", 100, 20);
+       
+        text("Gems save hearts", 100, 40);
+        fill(242, 0, 0);
+        text("Watch out for rocks", 100, 60);
+        fill(130, 79, 43);
+        rectMode(CORNER);
+        rect(0, height*0.90, width, height*0.10);
+        
+        for (var i = 0; i < grassXs.length; i++) {
+            image(getImage("cute/GrassBlock"), grassXs[i], height*0.85, 20, 20);
+            grassXs[i] -= 1;
+            if (grassXs[i] <= -20) {
+                grassXs[i] = width;
+            }
+        }
+        
+        for (var i = 0; i < sticks.length; i++) {
+            sticks[i].draw();
+            beaver.checkForStickGrab(sticks[i]);
+            sticks[i].x -= 1;
+        }
+        
+        for (var i = 0; i < gems.length; i++) {
+            gems[i].draw();
+            beaver.checkForGemGrab(gems[i]);
+            gems[i].x -= 1;
+        }
+        
+        for (var i = 0; i < beaver.hearts; i++) {
+            hearts[i].draw();
+        }
+                
+        for (var i = 0; i < rocks.length; i++) {
+            rocks[i].draw();
+            beaver.checkForRockTouch(rocks[i]);
+            rocks[i].x -= 1;
+        }
+        
+        
+        textSize(15);
+        fill(0, 0, 0);
+        text("Sticks: " + beaver.sticks, 20, 20);
+        text("Gems: " + beaver.sticks, 20, 40);
+        text("Rocks: " + beaver.rocks, 20, 60);
+
+//increase the decimal to increase difficulty
+
+        if (beaver.sticks/sticks.length >= 0.60) {
+            background(0, 0, 0);
+            textSize(50);
+            fill(255, 255, 255);
+            text("YOU WIN!", 50, 200);
+            textSize(18);
+            text("Sticks " + beaver.sticks, 150, 250);
+            text("Gems " + beaver.gems, 150, 270);
+            beaver.draw();
+            image(getImage("space/star"), 300, 300, 40, 40);
+            image(getImage("space/star"), 100, 100, 40, 40);
+            image(getImage("space/star"), 150, 50, 40, 40);
+            image(getImage("space/star"), 150, 350, 40, 40);
+            image(getImage("space/star"), 350, 350, 40, 40);
+            image(getImage("space/star"), 250, 60, 40, 40);
+            image(getImage("space/star"), 50, 350, 40, 40);
+            image(getImage("space/star"), 200, 20, 40, 40);
+            image(getImage("space/octopus"), 10, 280, 40, 40);
+            image(getImage("space/beetleship"), 260, 280, 40, 40);
+        }
+        
+            
+        if (keyIsPressed && keyCode === 0) {
+            beaver.hop();
+        } else {
+            beaver.fall();
+        }
+        
+        beaver.draw();
+    } 
+    
+//game over if lose all hearts
+
+    else if (beaver.hearts <= 0) {
+        background(0, 0, 0);
+        textSize(50);
+        fill(255, 255, 255);
+        text("GAME OVER", 50, 200);
+        textSize(18);
+        text("Sticks " + beaver.sticks, 150, 250);
+        text("Gems " + beaver.gems, 150, 270);
+        beaver.draw();
+    }
+  
+};
+
